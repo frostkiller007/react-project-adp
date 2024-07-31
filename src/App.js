@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
-import customers from './data.js';
+import customersData from './data.js';
 import './App.css';
 
 const log = (message) => console.log(message);
 
 const App = () => {
-  const [formObject, setFormObject] = useState(customers[0]);
+  const [customers, setCustomers] = useState(customersData);
+  const [formObject, setFormObject] = useState({ id: -1, name: '', email: '', password: '' });
+  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const mode = formObject.id >= 0 ? 'Update' : 'Add';
 
   const handleListClick = (item) => {
     log("in handleListClick()");
-    setFormObject(item);
+    if (selectedCustomerId === item.id) {
+      setFormObject({ id: -1, name: '', email: '', password: '' });
+      setSelectedCustomerId(null);
+    } else {
+      setFormObject(item);
+      setSelectedCustomerId(item.id);
+    }
   };
 
   const handleInputChange = (event) => {
@@ -21,14 +29,29 @@ const App = () => {
 
   const handleCancelClick = () => {
     log("in handleCancelClick()");
+    setFormObject({ id: -1, name: '', email: '', password: '' });
+    setSelectedCustomerId(null);
   };
 
   const handleDeleteClick = () => {
     log("in handleDeleteClick()");
+    setCustomers(customers.filter(customer => customer.id !== selectedCustomerId));
+    setFormObject({ id: -1, name: '', email: '', password: '' });
+    setSelectedCustomerId(null);
   };
 
   const handleSaveClick = () => {
     log("in handleSaveClick()");
+    if (formObject.id === -1) {
+      // Add new customer
+      const newCustomer = { ...formObject, id: customers.length + 1 };
+      setCustomers([...customers, newCustomer]);
+    } else {
+      // Update existing customer
+      setCustomers(customers.map(customer => (customer.id === formObject.id ? formObject : customer)));
+    }
+    setFormObject({ id: -1, name: '', email: '', password: '' });
+    setSelectedCustomerId(null);
   };
 
   return (
@@ -40,12 +63,16 @@ const App = () => {
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th>Pass</th>
+              <th>Password</th>
             </tr>
           </thead>
           <tbody>
             {customers.map((item) => (
-              <tr key={item.id} onClick={() => handleListClick(item)}>
+              <tr
+                key={item.id}
+                onClick={() => handleListClick(item)}
+                style={selectedCustomerId === item.id ? { fontWeight: 'bold', backgroundColor: '#d1ecf1' } : {}}
+              >
                 <td>{item.name}</td>
                 <td>{item.email}</td>
                 <td>{item.password}</td>
@@ -87,7 +114,7 @@ const App = () => {
                 </td>
               </tr>
               <tr>
-                <td className="label">Pass:</td>
+                <td className="label">Password:</td>
                 <td>
                   <input
                     type="text"
@@ -100,7 +127,7 @@ const App = () => {
               </tr>
               <tr className="button-bar">
                 <td colSpan="2">
-                  <input type="button" value="Delete" onClick={handleDeleteClick} />
+                  <input type="button" value="Delete" onClick={handleDeleteClick} disabled={formObject.id === -1} />
                   <input type="button" value="Save" onClick={handleSaveClick} />
                   <input type="button" value="Cancel" onClick={handleCancelClick} />
                 </td>

@@ -2,7 +2,7 @@ import React from 'react';
 
 const CustomerList = ({ customers, selectedCustomerId, handleListClick }) => (
   <div className="boxed">
-    <h4>Customer List</h4>
+    <h4><b>Mihir Dholakia's:-  Customer List</b></h4>
     <table id="customer-list">
       <thead>
         <tr>

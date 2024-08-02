@@ -2,8 +2,8 @@ let items = [
     {
       "id": 0,
       "name": "Mihir Dholakia",
-      "email": "mihir.dholakia@adp.com",
-      "password": "ADP"
+      "email": "mihir.dholakia@g.com",
+      "password": "yes"
     },
     {
       "name": "Katie Kates",
